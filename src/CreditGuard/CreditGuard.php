@@ -98,7 +98,9 @@ class CreditGuard
 
         /** If requested language is hebrew, convert result to utf-8 */
         if ($request->getLanguage() === Language::HEBREW) {
-            $result = iconv("utf-8", "iso-8859-8", $result);
+            if (function_exists('mb_convert_encoding')) {
+                $result = mb_convert_encoding($result, 'ISO-8859-8', 'UTF-8');
+            }
         }
 
         curl_close($ch);
