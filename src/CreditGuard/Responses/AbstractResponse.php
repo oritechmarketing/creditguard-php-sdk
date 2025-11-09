@@ -53,6 +53,8 @@ class AbstractResponse
 
     public function __construct(string $xmlString)
     {
+        $xmlString = static::convertXmlEncodingToUtf8($xmlString);
+        
         $this->xml = simplexml_load_string($xmlString);
 
         $this->initResponseFields();
@@ -61,6 +63,26 @@ class AbstractResponse
     }
 
     protected function init() { }
+
+    /**
+     * Convert XML string from ISO-8859-8 to UTF-8 if needed
+     *
+     * @param string $xmlString
+     * @return string
+     */
+    public static function convertXmlEncodingToUtf8(string $xmlString): string
+    {
+        // Check if XML contains ISO-8859-8 encoding declaration
+        if (stripos($xmlString, 'ISO-8859-8') !== false) {
+            // Convert the entire XML string from ISO-8859-8 to UTF-8
+            $xmlString = mb_convert_encoding($xmlString, 'UTF-8', 'ISO-8859-8');
+            
+            // Update the encoding declaration in the XML to UTF-8
+            $xmlString = preg_replace('/encoding=["\']ISO-8859-8["\']/i', 'encoding="UTF-8"', $xmlString);
+        }
+        
+        return $xmlString;
+    }
 
     protected function initResponseFields()
     {

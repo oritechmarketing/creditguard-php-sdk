@@ -21,7 +21,8 @@ class Transaction
         if ($xml instanceof \SimpleXMLElement) {
             $this->xml = $xml;
         } else {
-            $this->xml = simplexml_load_string((string)$xml);
+            $xmlString = AbstractResponse::convertXmlEncodingToUtf8((string)$xml);
+            $this->xml = simplexml_load_string($xmlString);
         }
     }
 
